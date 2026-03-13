@@ -19,3 +19,8 @@ export async function parsePeopleCsv(filePath) {
     return person;
   });
 }
+
+/**
+ * The above code is difficult to test because it interacts with the file system, which is a persistent global variable
+ * Fix: decouple data reading and processing and test separately. Create a temporary test file which the reader can test.
+ */

@@ -8,8 +8,3 @@ export function daysUntilChristmas(now) {
   const diffMillis = christmasDay.getTime() - today.getTime();
   return Math.floor(diffMillis / millisPerDay);
 }
-
-/**
- * The above code is difficult to test, because the result varies based on the day that the function is run.
- * Fix: give the Date as a parameter to the function, so that tests can be run predictably
- */

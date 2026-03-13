@@ -32,7 +32,7 @@ export class PostgresUserDao {
       `select user_id, password_hash
        from users
        where user_id = $1`,
-      [userId]
+      [userId],
     );
     return rows.map(this.#rowToUser)[0] || null;
   }
@@ -43,7 +43,7 @@ export class PostgresUserDao {
        values ($1, $2)
        on conflict (user_id) do update
            set password_hash = excluded.password_hash`,
-      [user.userId, user.passwordHash]
+      [user.userId, user.passwordHash],
     );
   }
 }
@@ -60,3 +60,10 @@ export class PasswordService {
     await this.users.save(user);
   }
 }
+
+/**
+ * The above code is difficult to test, because it interacts with a database which is a persistent global variable.
+ * Fix: set up a system for creating a test database when running unit tests, which is cleaned after the teste have been run
+ * Note that the test database should be seeded with some test data as well.
+ * ALSO, make sure the unit tests ALWAYS connect a test database, not prod!!
+ */
