@@ -1,26 +1,35 @@
 import argon2 from "@node-rs/argon2";
 import pg from "pg";
 
-export class PostgresUserDao {
-  static instance;
+export class PostgresDB {
+  db;
 
-  static getInstance() {
-    if (!this.instance) {
-      this.instance = new PostgresUserDao();
-    }
-    return this.instance;
+  /** user: process.env.PGUSER,
+      host: process.env.PGHOST,
+      database: process.env.PGDATABASE,
+      password: process.env.PGPASSWORD,
+      port: process.env.PGPORT, 
+  */
+  constructor(user, host, database, password, port) {
+    this.db = new pg.Pool({
+      user,
+      host,
+      database,
+      password,
+      port,
+    });
   }
-
-  db = new pg.Pool({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
-  });
 
   close() {
     this.db.end();
+  }
+}
+
+export class PostgresUserDao {
+  db;
+
+  constructor(postgresDB) {
+    this.db = postgresDB.db;
   }
 
   #rowToUser(row) {
@@ -49,7 +58,11 @@ export class PostgresUserDao {
 }
 
 export class PasswordService {
-  users = PostgresUserDao.getInstance();
+  users;
+
+  constructor(postgresUserDao) {
+    this.users = postgresUserDao;
+  }
 
   async changePassword(userId, oldPassword, newPassword) {
     const user = await this.users.getById(userId);
@@ -66,8 +79,4 @@ export class PasswordService {
  * Fix: set up a system for creating a test database when running unit tests, which is cleaned after the tests have been run
  * Note that the test database should be seeded with some test data as well.
  * ALSO, make sure the unit tests ALWAYS connect to a test database, not prod!!
- *
- * On deeper inspection the code has more problems:
- *  - PostgresUserDao is implemented with a singleton pattern which makes testing difficult.
- *  - PasswordService uses the singleton directly.
  */
