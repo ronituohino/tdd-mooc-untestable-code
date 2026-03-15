@@ -67,5 +67,13 @@ describe("Testable 2: a dice game", () => {
     }
   });
 
-  test("the dice hand returns the maximum of the dice when different", () => {});
+  test("the dice hand returns the maximum of the dice when different", () => {
+    for (let n = 1; n <= 6; n++) {
+      for (let m = 1; m <= 6; m++) {
+        if (m !== n) {
+          expect(diceHandValue(n, m)).to.equal(Math.max(n, m));
+        }
+      }
+    }
+  });
 });
