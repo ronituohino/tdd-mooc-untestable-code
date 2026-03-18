@@ -4,12 +4,6 @@ import pg from "pg";
 export class PostgresDB {
   db;
 
-  /** user: process.env.PGUSER,
-      host: process.env.PGHOST,
-      database: process.env.PGDATABASE,
-      password: process.env.PGPASSWORD,
-      port: process.env.PGPORT, 
-  */
   constructor(user, host, database, password, port) {
     this.db = new pg.Pool({
       user,
@@ -73,10 +67,3 @@ export class PasswordService {
     await this.users.save(user);
   }
 }
-
-/**
- * The above code is difficult to test, because it interacts with a database which is a persistent global variable.
- * Fix: set up a system for creating a test database when running unit tests, which is cleaned after the tests have been run
- * Note that the test database should be seeded with some test data as well.
- * ALSO, make sure the unit tests ALWAYS connect to a test database, not prod!!
- */
