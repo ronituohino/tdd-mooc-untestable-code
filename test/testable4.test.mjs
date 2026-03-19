@@ -73,7 +73,26 @@ describe("Testable 4: enterprise application", () => {
     expect(result.passwordHash).to.equal("newhashfor1");
   });
 
-  test.skip("password service can change a user password when id exists and old password matches", () => {});
-  test.skip("password service will throw an error if old password does not match", () => {});
-  test.skip("password service will throw an error if user id does not exist", () => {});
+  test("password service can change a user password when id exists and old password matches", async () => {
+    await passwordService.changePassword(1, "123qwe123", "muchbetterpass1");
+    const result = await userDao.getById(1);
+    expect(result.passwordHash).to.not.equal(
+      "$argon2id$v=19$m=19456,t=2,p=1$896omGJSjsS+c5wabGATLg$hYyW8RemrZZQtqOu4osMwLm/mFQQtiv4zKSDDpQROVU", // 123qwe123
+    );
+  });
+  test("password service will throw an error if old password does not match", async () => {
+    try {
+      await passwordService.changePassword(1, "123qwe12", "muchbetterpass1");
+    } catch (e) {
+      expect(e.message).to.equal("wrong old password");
+    }
+  });
+  test("password service will throw an error if user id does not exist", async () => {
+    try {
+      await passwordService.changePassword(3, "123qwe12", "muchbetterpass1");
+    } catch (e) {
+      // Could have better implementation
+      expect(e.message).to.equal("Cannot read properties of null (reading 'passwordHash')");
+    }
+  });
 });
