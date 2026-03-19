@@ -43,7 +43,10 @@ describe("Testable 4: enterprise application", () => {
     expect(postgres.db.options.database).to.equal("untestable");
   });
 
-  test.skip("test database contains seed data", () => {});
+  test("test database contains seed data", async () => {
+    const { rows } = await postgres.db.query(`select password_hash as hash from users where user_id=$1`, [1]);
+    expect(rows[0].hash.length).to.be.greaterThan(0);
+  });
 
   test.skip("DAO can get a user by id", () => {});
   test.skip("DAO will return undefined when id does not exist", () => {});
