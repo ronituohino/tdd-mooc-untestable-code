@@ -48,8 +48,14 @@ describe("Testable 4: enterprise application", () => {
     expect(rows[0].hash.length).to.be.greaterThan(0);
   });
 
-  test.skip("DAO can get a user by id", () => {});
-  test.skip("DAO will return undefined when id does not exist", () => {});
+  test("DAO can get a user by id", async () => {
+    const result = await userDao.getById(1);
+    expect(result).to.not.equal(null);
+  });
+  test("DAO will return null when id does not exist", async () => {
+    const result = await userDao.getById(4);
+    expect(result).to.equal(null);
+  });
   test.skip("DAO can use save to create a new user with id and password", () => {});
   test.skip("DAO can use save to update an existing user's password with the same id", () => {});
 
